@@ -1,0 +1,64 @@
+/* font-family: 'Press Start 2P', cursive;  for display*/
+/* font-family: 'Orbitron', sans-serif;  for buttons*/
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.select-off {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #333333;
+    height: 100vh;
+}
+
+.container {
+    padding: 20px;
+    background: #f4f4f4;
+    margin: auto;
+    border: 3px solid #024602;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
