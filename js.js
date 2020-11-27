@@ -22,22 +22,46 @@ Promise.all([
     const counties = data[0];
     const educationData = data[1];
 
-    let path = d3.geoPath();
-    let xScale = d3.scaleLinear().domain([2.6, 75.1]).rangeRound([600, 860]);
-    let colorScale = d3
-      .scaleThreshold()
-      .domain(d3.range(2.6, 75.1, (75.1 - 2.6) / 8))
-      .range(d3.schemeGreens[9]);
+    const eduMin = d3.min(educationData.map((item) => item.bachelorsOrHigher));
+    const eduMax = d3.max(educationData.map((item) => item.bachelorsOrHigher));
 
-    chart.append("g").attr("transform", "translate(610,20)");
-    // .append(() => legend({ colorScale, title: data.title, width: 260 }));
+    let path = d3.geoPath();
+    let xScale = d3
+      .scaleLinear()
+      .domain([eduMin, eduMax])
+      .rangeRound([width, height]);
+
+    const colorScale = d3
+      .scaleThreshold()
+      .domain(
+        ((min, max, count) => {
+          let array = [];
+          let step = (max - min) / count;
+          let base = min;
+          for (let i = 1; i < count; i++) {
+            array.push(base + i * step);
+          }
+          return array;
+        })(eduMin, eduMax, colorbrewer.Greens[9].length)
+      )
+      .range(colorbrewer.Greens[9].reverse());
+    chart.append("g");
 
     chart
       .append("g")
       .selectAll("path")
       .data(topojson.feature(counties, counties.objects.counties).features)
       .join("path")
-      .attr("fill", (d) => colorScale(educationData.id))
+      .attr("fill", (d) => {
+        var result = educationData.filter(function (obj) {
+          return obj.fips === d.id;
+        });
+        if (result[0]) {
+          return colorScale(result[0].bachelorsOrHigher);
+        }
+        // could not find a matching fips id in the data
+        return colorScale(0);
+      })
       .attr("d", path);
 
     // chart
