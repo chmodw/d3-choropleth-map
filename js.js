@@ -6,9 +6,7 @@ const chart = d3
   .select("#chart-container")
   .append("svg")
   .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom);
-// .append("g")
-// .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("height", height + margin.top + margin.bottom + 50);
 
 Promise.all([
   d3.json(
@@ -26,11 +24,8 @@ Promise.all([
     const eduMax = d3.max(educationData.map((item) => item.bachelorsOrHigher));
 
     let path = d3.geoPath();
-    let xScale = d3
-      .scaleLinear()
-      .domain([eduMin, eduMax])
-      .rangeRound([width, height]);
 
+    // generating the color band
     const colorScale = d3
       .scaleThreshold()
       .domain(
@@ -47,6 +42,7 @@ Promise.all([
       .range(colorbrewer.Greens[9].reverse());
     chart.append("g");
 
+    // generating the map
     chart
       .append("g")
       .selectAll("path")
@@ -64,37 +60,7 @@ Promise.all([
       })
       .attr("d", path);
 
-    // chart
-    //   .append("g")
-    //   .attr("class", "counties")
-    //   .selectAll("path")
-    //   .data(topojson.feature(counties, counties.objects.counties).features)
-    //   .enter()
-    //   .append("path")
-    //   .attr("class", "county")
-    //   .attr("data-fips", (d) => d.id)
-    //   .attr("data-education", function (d) {
-    //     var result = educationData.filter(function (obj) {
-    //       return obj.fips === d.id;
-    //     });
-    //     if (result[0]) {
-    //       return result[0].bachelorsOrHigher;
-    //     }
-    //     // could not find a matching fips id in the data
-    //     console.log("could find data for: ", d.id);
-    //     return 0;
-    //   })
-    //   .attr("fill", function (d) {
-    //     var result = educationData.filter(function (obj) {
-    //       return obj.fips === d.id;
-    //     });
-    //     if (result[0]) {
-    //       return colorScale(result[0].bachelorsOrHigher);
-    //     }
-    //     // could not find a matching fips id in the data
-    //     return colorScale(0);
-    //   });
-
+    // adding the state lines
     chart
       .append("path")
       .datum(
@@ -104,6 +70,37 @@ Promise.all([
       .attr("stroke", "white")
       .attr("stroke-linejoin", "round")
       .attr("d", path);
+
+    // creating the legend
+    const legendX = d3.scaleLinear().domain([eduMin, eduMax]).range([0, 300]);
+
+    const legendXAxis = d3
+      .axisBottom()
+      .scale(legendX)
+      .tickSize(15, 0)
+      .tickValues(colorScale.domain())
+      .tickFormat(d3.format(".1f"));
+
+    let legend = d3.select("#legend");
+
+    legend
+      .selectAll("rect")
+      .data(
+        colorScale.range().map(function (color) {
+          let d = colorScale.invertExtent(color);
+          if (d[0] == null) d[0] = legendX.domain()[0];
+          if (d[1] == null) d[1] = legendX.domain()[1];
+          return d;
+        })
+      )
+      .enter()
+      .insert("rect", ".tick")
+      .attr("height", 10)
+      .attr("x", (d) => legendX(d[0]))
+      .attr("width", (d) => legendX(d[1]) - legendX(d[0]))
+      .attr("fill", (d) => colorScale(d[0]));
+
+    legend.append("g").call(legendXAxis);
   })
   .catch((error) => {
     if (error) throw error;

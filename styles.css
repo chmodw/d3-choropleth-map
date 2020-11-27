@@ -58,7 +58,17 @@ body {
     background: #f4f4f4;
     margin: auto;
     border: 3px solid #024602;
-    padding: 10px;
+    padding: 30px;
     text-align: center;
     position: relative;
+}
+
+#heading {
+    text-align: center;
+}
+
+#legend {
+    position: absolute;
+    top: 710px;
+    left: 100px;
 }
