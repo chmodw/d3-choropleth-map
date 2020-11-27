@@ -5,12 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>D3 Choropleth Map</title>
     <link href="styles.css" rel="stylesheet" />
-    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js."></script>
   </head>
   <body>
-    <div class="container"></div>
+    <div id="container">
+      <div id="heading">
+        <h1 id="title">United States Educational Attainment</h1>
+        <div id="description">
+          Percentage of adults age 25 and older with a bachelor's degree or
+          higher (2010-2014)
+        </div>
+      </div>
+
+      <div id="chart-container"></div>
+    </div>
+
+    <div id="test"></div>
+
     <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+
     <script src="js.js"></script>
   </body>
 </html>
