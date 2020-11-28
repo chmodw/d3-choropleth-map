@@ -49,21 +49,18 @@ Promise.all([
       .data(topojson.feature(counties, counties.objects.counties).features)
       .join("path")
       .attr("fill", (d) => {
-        let percentage = educationData.find((item) => {
-          return item.fips === d.id;
-        });
-
-        if (percentage) {
-          return colorScale(percentage.bachelorsOrHigher);
-        }
-
-        return "#fff";
+        let percentage = educationData.find((item) => item.fips === d.id);
+        return percentage ? colorScale(percentage.bachelorsOrHigher) : "#fff";
       })
       .attr("d", path)
+      .attr("class", "county")
+      .attr("data-fips", (d) => d.id)
+      .attr("data-education", function (d) {
+        let education = educationData.find((item) => item.fips === d.id);
+        return education ? education.bachelorsOrHigher : 0;
+      })
       .on("mouseover", (e, d) => {
-        let education = educationData.find((item) => {
-          return item.fips === d.id;
-        });
+        let education = educationData.find((item) => item.fips === d.id);
         d3.select("#tooltip")
           .style("opacity", 1)
           .text(
