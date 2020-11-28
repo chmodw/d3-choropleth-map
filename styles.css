@@ -72,3 +72,13 @@ body {
     top: 710px;
     left: 100px;
 }
+
+#tooltip {
+    position: absolute;
+    opacity: 0;
+    background: #ffffca;
+    min-width: 200px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+}

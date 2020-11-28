@@ -39,7 +39,7 @@ Promise.all([
           return array;
         })(eduMin, eduMax, colorbrewer.Greens[9].length)
       )
-      .range(colorbrewer.Greens[9].reverse());
+      .range(colorbrewer.Greens[9]);
     chart.append("g");
 
     // generating the map
@@ -49,16 +49,41 @@ Promise.all([
       .data(topojson.feature(counties, counties.objects.counties).features)
       .join("path")
       .attr("fill", (d) => {
-        var result = educationData.filter(function (obj) {
-          return obj.fips === d.id;
+        let percentage = educationData.find((item) => {
+          return item.fips === d.id;
         });
-        if (result[0]) {
-          return colorScale(result[0].bachelorsOrHigher);
+
+        if (percentage) {
+          return colorScale(percentage.bachelorsOrHigher);
         }
-        // could not find a matching fips id in the data
-        return colorScale(0);
+
+        return "#fff";
       })
-      .attr("d", path);
+      .attr("d", path)
+      .on("mouseover", (e, d) => {
+        let education = educationData.find((item) => {
+          return item.fips === d.id;
+        });
+        d3.select("#tooltip")
+          .style("opacity", 1)
+          .text(
+            education.area_name +
+              ", " +
+              education.state +
+              ", " +
+              education.bachelorsOrHigher +
+              "%"
+          )
+          .attr(
+            "data-education",
+            education.bachelorsOrHigher ? education.bachelorsOrHigher : 0
+          )
+          .style("left", e.pageX - 420 + "px")
+          .style("top", e.pageY - 100 + "px");
+      })
+      .on("mouseleave", (e, d) => {
+        d3.select("#tooltip").style("opacity", 0);
+      });
 
     // adding the state lines
     chart
